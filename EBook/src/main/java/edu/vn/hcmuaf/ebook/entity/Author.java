@@ -16,12 +16,14 @@ import java.util.Set;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class Category {
+public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String name;
     String description;
+    String avatar;
+    Date birthDay;
     @CreatedDate
     Date createAt;
     @UpdateTimestamp

@@ -10,7 +10,12 @@ public enum ErrorCode {
     INVALID_KEY(1001, "Invalid key", HttpStatus.BAD_REQUEST),
     USER_EXISTED(1002, "User existed", HttpStatus.BAD_REQUEST),
     EMAIL_EXISTED(1003, "Email existed", HttpStatus.BAD_REQUEST),
-    PASSWORD_NOT_MATCH(1004, "Password not match", HttpStatus.BAD_REQUEST);
+    PASSWORD_NOT_MATCH(1004, "Password not match", HttpStatus.BAD_REQUEST),
+    ROLE_NOT_EXISTED(1005, "Role not existed", HttpStatus.BAD_REQUEST),
+    USER_NOT_EXISTED(1006, "User not existed", HttpStatus.BAD_REQUEST),
+    UNAUTHENTICATED(1007, "Unauthenticated", HttpStatus.UNAUTHORIZED),
+    UNAUTHORIZED(1008, "Unauthorized", HttpStatus.FORBIDDEN),
+    ;
 
 
     private int code;

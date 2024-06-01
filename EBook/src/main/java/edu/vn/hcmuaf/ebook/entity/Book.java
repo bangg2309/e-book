@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.util.Date;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -17,18 +19,28 @@ import java.util.Date;
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+    Long id;
     String title;
     double price;
-    @ManyToOne
-    Category category;
-    String author;
+    @ManyToMany
+    @JoinTable(
+            name = "book_category",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    Set<Category> categories;
+    @ManyToMany
+    @JoinTable(
+            name = "author_book",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
+    Set<Author> authors;
     String content;
-    String linkFileOnl;
-    String linkImgOnl;
-    String linkThumbnail;
+    String imageUrl;
     int pages;
-    String url;
+    @CreatedDate
+    Date createAt;
     @UpdateTimestamp
     Date updateAt;
 }
