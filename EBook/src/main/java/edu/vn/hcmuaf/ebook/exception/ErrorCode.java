@@ -18,7 +18,9 @@ public enum ErrorCode {
     EMAIL_NOT_EXISTED(1009, "Email not existed", HttpStatus.BAD_REQUEST),
     TOKEN_NOT_EXISTED(1010, "Token not existed", HttpStatus.BAD_REQUEST),
     TOKEN_EXPIRED(1011, "Token expired", HttpStatus.BAD_REQUEST),
-    EMAIL_NOT_MATCH(1012, "Email not match", HttpStatus.BAD_REQUEST);
+    EMAIL_NOT_MATCH(1012, "Email not match", HttpStatus.BAD_REQUEST),
+    BOOK_NOT_EXISTED(1013, "Book not existed", HttpStatus.BAD_REQUEST),
+    ;
 
 
     private int code;

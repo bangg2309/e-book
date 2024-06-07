@@ -2,6 +2,7 @@ package edu.vn.hcmuaf.ebook.service;
 
 import edu.vn.hcmuaf.ebook.dto.request.ResetPasswordRequest;
 import edu.vn.hcmuaf.ebook.dto.request.UserCreationRequest;
+import edu.vn.hcmuaf.ebook.dto.response.BookResponse;
 import edu.vn.hcmuaf.ebook.dto.response.UserResponse;
 import edu.vn.hcmuaf.ebook.entity.PasswordResetToken;
 import edu.vn.hcmuaf.ebook.entity.Role;
@@ -9,7 +10,9 @@ import edu.vn.hcmuaf.ebook.entity.User;
 import edu.vn.hcmuaf.ebook.enums.RoleEnum;
 import edu.vn.hcmuaf.ebook.exception.AppException;
 import edu.vn.hcmuaf.ebook.exception.ErrorCode;
+import edu.vn.hcmuaf.ebook.mapper.BookMapper;
 import edu.vn.hcmuaf.ebook.mapper.UserMapper;
+import edu.vn.hcmuaf.ebook.repository.BookRepository;
 import edu.vn.hcmuaf.ebook.repository.PasswordResetTokenRepository;
 import edu.vn.hcmuaf.ebook.repository.RoleRepository;
 import edu.vn.hcmuaf.ebook.repository.UserRepository;
@@ -33,25 +36,18 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 
 @Slf4j
 public class UserService {
-    final UserRepository userRepository;
-    final UserMapper userMapper;
-    final PasswordEncoder passwordEncoder;
-    final RoleRepository roleRepository;
-    final PasswordResetTokenRepository passwordResetTokenRepository;
-    final EmailService emailService;
-
-    @Value("${server.address}")
-    private String serverAddress;
-
-    @Value("${server.port}")
-    private String serverPort;
-
-    @Value("${server.servlet.context-path}")
-    private String contextPath;
+    UserRepository userRepository;
+    UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
+    RoleRepository roleRepository;
+    PasswordResetTokenRepository passwordResetTokenRepository;
+    EmailService emailService;
+    BookRepository bookRepository;
+    BookMapper bookMapper;
 
     public UserResponse createUser(UserCreationRequest request) {
         if (userRepository.existsByEmail(request.getEmail()))
@@ -117,5 +113,28 @@ public class UserService {
         userRepository.save(user);
         passwordResetTokenRepository.delete(passwordResetToken);
         emailService.sendEmail(request.getEmail(), "New password", "Your new password is " + newPassword);
+    }
+
+    public void addBookToWishList(Long bookId) {
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        user.getBooks().add(bookRepository.findById(bookId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOK_NOT_EXISTED)));
+        userRepository.save(user);
+    }
+
+    public List<BookResponse> getBooksInWishList() {
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        return user.getBooks().stream()
+                .map(bookMapper::toBookResponse)
+                .toList();
+    }
+
+    public void removeBookFromWishList(long bookId) {
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        user.getBooks().removeIf(book -> book.getId() == bookId);
+        userRepository.save(user);
     }
 }
