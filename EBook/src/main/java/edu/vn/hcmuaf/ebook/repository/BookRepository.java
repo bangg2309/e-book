@@ -8,4 +8,6 @@ import java.util.Collection;
 public interface BookRepository extends JpaRepository<Book, Long> {
 
     Collection<Book> findByCategoriesId(long categoryId);
+
+    Collection<Book> findByTitleContainingIgnoreCase(String keyword);
 }

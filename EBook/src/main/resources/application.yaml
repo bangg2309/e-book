@@ -1,7 +1,9 @@
 server:
+  address: 127.0.0.1
   port: 8080
   servlet:
     context-path: /ebook
+
 
 spring:
   datasource:
@@ -12,6 +14,20 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: bangg2309@gmail.com
+    password: nejyqhgynbsqdvri
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+
 
 jwt:
   signerKey: "iQv8vndbJT0XjXKKD3W/Y3rhnxV3oQSXw7J/oTQFqITVJ9vvmv8xOC6TkFy8iXNy"

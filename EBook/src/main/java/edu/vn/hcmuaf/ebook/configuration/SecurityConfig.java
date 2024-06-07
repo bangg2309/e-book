@@ -31,7 +31,7 @@ public class SecurityConfig {
     private String signerKey;
 
     private final String[] PUBLIC_GET_ENDPOINTS = {"/books", "/books/**", "/categories", "/categories/**"};
-    private final String[] PUBLIC_POST_ENDPOINTS = {"/users", "/auth/token", "/auth/introspect"
+    private final String[] PUBLIC_POST_ENDPOINTS = {"/users", "/users/forget-password","/users/reset-password", "/auth/token", "/auth/introspect"
             , "/auth/logout"};
     private final String[] ADMIN_ENDPOINTS = {"/users"};
 
@@ -71,6 +71,5 @@ public class SecurityConfig {
 
         return jwtAuthenticationConverter;
     }
-
 
 }

@@ -15,7 +15,10 @@ public enum ErrorCode {
     USER_NOT_EXISTED(1006, "User not existed", HttpStatus.BAD_REQUEST),
     UNAUTHENTICATED(1007, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1008, "Unauthorized", HttpStatus.FORBIDDEN),
-    ;
+    EMAIL_NOT_EXISTED(1009, "Email not existed", HttpStatus.BAD_REQUEST),
+    TOKEN_NOT_EXISTED(1010, "Token not existed", HttpStatus.BAD_REQUEST),
+    TOKEN_EXPIRED(1011, "Token expired", HttpStatus.BAD_REQUEST),
+    EMAIL_NOT_MATCH(1012, "Email not match", HttpStatus.BAD_REQUEST);
 
 
     private int code;
