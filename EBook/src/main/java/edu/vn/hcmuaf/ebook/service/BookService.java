@@ -40,4 +40,10 @@ public class BookService {
                 .map(bookMapper::toBookResponse)
                 .toList();
     }
+
+    public List<BookResponse> searchBooks(String keyword) {
+        return bookRepository.findByTitleContainingIgnoreCase(keyword).stream()
+                .map(bookMapper::toBookResponse)
+                .toList();
+    }
 }

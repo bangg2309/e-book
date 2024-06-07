@@ -1,6 +1,9 @@
 package edu.vn.hcmuaf.ebook.controller;
 
 
+import edu.vn.hcmuaf.ebook.utils.Message;
+import edu.vn.hcmuaf.ebook.dto.request.ForgetPasswordRequest;
+import edu.vn.hcmuaf.ebook.dto.request.ResetPasswordRequest;
 import edu.vn.hcmuaf.ebook.dto.request.UserCreationRequest;
 import edu.vn.hcmuaf.ebook.dto.response.ApiResponse;
 import edu.vn.hcmuaf.ebook.dto.response.UserResponse;
@@ -10,7 +13,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +30,23 @@ public class UserController {
     ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.createUser(request))
+                .build();
+    }
+
+    @PostMapping("/forget-password")
+    ApiResponse<Void> forgetPassword(@RequestBody ForgetPasswordRequest request) {
+        String email = request.getEmail();
+        userService.forgetPassword(email);
+        return ApiResponse.<Void>builder()
+                .message(Message.PASSWORD_FORGET_SUCCESS)
+                .build();
+    }
+
+    @PostMapping("/reset-password")
+    ApiResponse<Void> resetPassword(@RequestBody ResetPasswordRequest request) {
+        userService.resetPassword(request);
+        return ApiResponse.<Void>builder()
+                .message(Message.PASSWORD_RESET_SUCCESS)
                 .build();
     }
 

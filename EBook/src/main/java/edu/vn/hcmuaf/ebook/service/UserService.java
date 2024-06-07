@@ -1,36 +1,57 @@
 package edu.vn.hcmuaf.ebook.service;
 
+import edu.vn.hcmuaf.ebook.dto.request.ResetPasswordRequest;
 import edu.vn.hcmuaf.ebook.dto.request.UserCreationRequest;
 import edu.vn.hcmuaf.ebook.dto.response.UserResponse;
+import edu.vn.hcmuaf.ebook.entity.PasswordResetToken;
 import edu.vn.hcmuaf.ebook.entity.Role;
 import edu.vn.hcmuaf.ebook.entity.User;
 import edu.vn.hcmuaf.ebook.enums.RoleEnum;
 import edu.vn.hcmuaf.ebook.exception.AppException;
 import edu.vn.hcmuaf.ebook.exception.ErrorCode;
 import edu.vn.hcmuaf.ebook.mapper.UserMapper;
+import edu.vn.hcmuaf.ebook.repository.PasswordResetTokenRepository;
 import edu.vn.hcmuaf.ebook.repository.RoleRepository;
 import edu.vn.hcmuaf.ebook.repository.UserRepository;
+import edu.vn.hcmuaf.ebook.utils.RandomStringUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.internal.IgnoreForbiddenApisErrors;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
+
 @Slf4j
 public class UserService {
-    UserRepository userRepository;
-    UserMapper userMapper;
-    PasswordEncoder passwordEncoder;
-    RoleRepository roleRepository;
+    final UserRepository userRepository;
+    final UserMapper userMapper;
+    final PasswordEncoder passwordEncoder;
+    final RoleRepository roleRepository;
+    final PasswordResetTokenRepository passwordResetTokenRepository;
+    final EmailService emailService;
+
+    @Value("${server.address}")
+    private String serverAddress;
+
+    @Value("${server.port}")
+    private String serverPort;
+
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
 
     public UserResponse createUser(UserCreationRequest request) {
         if (userRepository.existsByEmail(request.getEmail()))
@@ -66,5 +87,35 @@ public class UserService {
         return userRepository.findById(id)
                 .map(userMapper::toUserResponse)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    }
+
+    public void forgetPassword(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
+//        passwordResetTokenRepository.deleteByUser(user);
+        String token = RandomStringUtils.randomNumber(6);
+        PasswordResetToken passwordResetToken = PasswordResetToken.builder()
+                .token(token)
+                .user(user)
+                .expiryDate(new Date(System.currentTimeMillis() + 3600000))
+                .build();
+        passwordResetTokenRepository.save(passwordResetToken);
+        emailService.sendEmail(email, "Reset password", "Enter code " + token + " to reset password. This code will expire in 1 hour.");
+    }
+
+    public void resetPassword(ResetPasswordRequest request) {
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(request.getToken());
+        if (passwordResetToken == null)
+            throw new AppException(ErrorCode.TOKEN_NOT_EXISTED);
+        if (!passwordResetToken.getUser().getEmail().equals(request.getEmail()))
+            throw new AppException(ErrorCode.EMAIL_NOT_MATCH);
+        if (passwordResetToken.getExpiryDate().before(new Date()))
+            throw new AppException(ErrorCode.TOKEN_EXPIRED);
+        User user = passwordResetToken.getUser();
+        String newPassword = RandomStringUtils.randomString(8);
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        passwordResetTokenRepository.delete(passwordResetToken);
+        emailService.sendEmail(request.getEmail(), "New password", "Your new password is " + newPassword);
     }
 }
