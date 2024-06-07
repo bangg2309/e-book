@@ -34,12 +34,7 @@ public class BookController {
                 .result(bookService.getBook(id))
                 .build();
     }
-    @GetMapping("{categoryId}")
-    ApiResponse<List<BookResponse>> getBooksByCategoryId(@PathVariable long categoryId) {
-        return ApiResponse.<List<BookResponse>>builder()
-                .result(bookService.getBooksByCategoryId(categoryId))
-                .build();
-    }
+
     @GetMapping("/search/{keyword}")
     ApiResponse<List<BookResponse>> searchBooks(@PathVariable String keyword) {
         return ApiResponse.<List<BookResponse>>builder()
