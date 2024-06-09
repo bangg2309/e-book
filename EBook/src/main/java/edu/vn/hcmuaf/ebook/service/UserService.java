@@ -112,7 +112,9 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         passwordResetTokenRepository.delete(passwordResetToken);
-        emailService.sendEmail(request.getEmail(), "New password", "Your new password is " + newPassword);
+        Thread thread = new Thread(() ->
+                emailService.sendEmail(request.getEmail(), "New password", "Your new password is " + newPassword));
+        thread.start();
     }
 
     public void addBookToWishList(Long bookId) {
