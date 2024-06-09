@@ -1,8 +1,6 @@
 package edu.vn.hcmuaf.ebook.service;
 
-import edu.vn.hcmuaf.ebook.dto.response.ApiResponse;
 import edu.vn.hcmuaf.ebook.dto.response.BookResponse;
-import edu.vn.hcmuaf.ebook.entity.Book;
 import edu.vn.hcmuaf.ebook.mapper.BookMapper;
 import edu.vn.hcmuaf.ebook.repository.BookRepository;
 import lombok.AccessLevel;
@@ -11,9 +9,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor

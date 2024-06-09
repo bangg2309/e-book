@@ -43,4 +43,6 @@ public class Book {
     Date createAt;
     @UpdateTimestamp
     Date updateAt;
+    @OneToMany(mappedBy = "book")
+    Set<Comment> comments;
 }
