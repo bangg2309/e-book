@@ -1,6 +1,7 @@
 package edu.vn.hcmuaf.ebook.controller;
 
 
+import edu.vn.hcmuaf.ebook.dto.request.UserUpdationRequest;
 import edu.vn.hcmuaf.ebook.utils.Message;
 import edu.vn.hcmuaf.ebook.dto.request.ForgetPasswordRequest;
 import edu.vn.hcmuaf.ebook.dto.request.ResetPasswordRequest;
@@ -72,6 +73,13 @@ public class UserController {
     ApiResponse<UserResponse> getMyInfo() {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.getMyInfo())
+                .build();
+    }
+    @PutMapping("/update")
+    ApiResponse<Void> updateUser(@RequestBody UserUpdationRequest request) {
+        userService.updateUser(request);
+        return ApiResponse.<Void>builder()
+                .message(Message.UPDATE_USER_SUCCESS)
                 .build();
     }
 }

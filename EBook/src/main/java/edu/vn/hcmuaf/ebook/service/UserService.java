@@ -2,6 +2,7 @@ package edu.vn.hcmuaf.ebook.service;
 
 import edu.vn.hcmuaf.ebook.dto.request.ResetPasswordRequest;
 import edu.vn.hcmuaf.ebook.dto.request.UserCreationRequest;
+import edu.vn.hcmuaf.ebook.dto.request.UserUpdationRequest;
 import edu.vn.hcmuaf.ebook.dto.response.BookResponse;
 import edu.vn.hcmuaf.ebook.dto.response.UserResponse;
 import edu.vn.hcmuaf.ebook.entity.PasswordResetToken;
@@ -135,6 +136,14 @@ public class UserService {
         User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         user.getBooks().removeIf(book -> book.getId() == bookId);
+        userRepository.save(user);
+    }
+
+    public void updateUser(UserUpdationRequest request) {
+        User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        user.setFullName(request.getFullName());
+        user.setAvatar(request.getAvatar());
         userRepository.save(user);
     }
 }
