@@ -18,9 +18,10 @@ public class BookResponse {
     long id;
     String title;
     List<Author> authors;
-    List<Category> categories;
+    List<CategoryResponse> categories;
     List<CommentResponse> comments;
     double price;
     private int pages;
     String imageUrl;
+    int status;
 }

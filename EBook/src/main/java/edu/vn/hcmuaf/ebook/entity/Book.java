@@ -7,6 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 
 @Getter
@@ -45,4 +46,7 @@ public class Book {
     Date updateAt;
     @OneToMany(mappedBy = "book")
     Set<Comment> comments;
+    int status;
+
+
 }
