@@ -1,4 +1,4 @@
-package edu.vn.hcmuaf.ebook.controller;
+package edu.vn.hcmuaf.ebook.controller.auth;
 
 import com.nimbusds.jose.JOSEException;
 import edu.vn.hcmuaf.ebook.dto.request.AuthenticationRequest;

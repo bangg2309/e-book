@@ -25,20 +25,20 @@ public class ApplicationInitConfig {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-//    @Bean
-//    ApplicationRunner applicationRunner(UserRepository userRepository,
-//                                        RoleRepository roleRepository) {
-//        return args -> {
-//            if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
-//                Role role = roleRepository.findByName(RoleEnum.ADMIN.name())
-//                        .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
-//                User user = User.builder()
-//                        .email("admin@gmail.com")
-//                        .password(passwordEncoder.encode("admin"))
-//                        .role(role)
-//                        .build();
-//                userRepository.save(user);
-//            }
-//        };
-//    }
+    @Bean
+    ApplicationRunner applicationRunner(UserRepository userRepository,
+                                        RoleRepository roleRepository) {
+        return args -> {
+            if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
+                Role role = roleRepository.findByName(RoleEnum.ADMIN.name())
+                        .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
+                User user = User.builder()
+                        .email("admin@gmail.com")
+                        .password(passwordEncoder.encode("admin"))
+                        .role(role)
+                        .build();
+                userRepository.save(user);
+            }
+        };
+    }
 }

@@ -1,4 +1,4 @@
-package edu.vn.hcmuaf.ebook.controller;
+package edu.vn.hcmuaf.ebook.controller.user;
 
 import edu.vn.hcmuaf.ebook.dto.response.ApiResponse;
 import edu.vn.hcmuaf.ebook.dto.response.BookResponse;
