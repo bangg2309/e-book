@@ -22,23 +22,23 @@ public class BookController {
     BookService bookService;
 
     @GetMapping
-    ApiResponse<List<BookResponse>> getBooks() {
+    ApiResponse<List<BookResponse>> getActiveBooks() {
         return ApiResponse.<List<BookResponse>>builder()
-                .result(bookService.getBooks())
+                .result(bookService.getBooksActive())
                 .build();
     }
 
     @GetMapping("/{id}")
-    ApiResponse<BookResponse> getBook(@PathVariable long id) {
+    ApiResponse<BookResponse> getActiveBook(@PathVariable long id) {
         return ApiResponse.<BookResponse>builder()
-                .result(bookService.getBook(id))
+                .result(bookService.getBookActive(id))
                 .build();
     }
 
     @GetMapping("/search/{keyword}")
-    ApiResponse<List<BookResponse>> searchBooks(@PathVariable String keyword) {
+    ApiResponse<List<BookResponse>> searchActiveBooks(@PathVariable String keyword) {
         return ApiResponse.<List<BookResponse>>builder()
-                .result(bookService.searchBooks(keyword))
+                .result(bookService.searchActiveBooks(keyword))
                 .build();
     }
 
