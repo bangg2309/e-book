@@ -6,15 +6,18 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import edu.vn.hcmuaf.ebook.dto.request.AuthenticationRequest;
+import edu.vn.hcmuaf.ebook.dto.request.GoogleAuthRequest;
 import edu.vn.hcmuaf.ebook.dto.request.IntrospectRequest;
 import edu.vn.hcmuaf.ebook.dto.request.LogoutRequest;
 import edu.vn.hcmuaf.ebook.dto.response.AuthenticationResponse;
 import edu.vn.hcmuaf.ebook.dto.response.IntrospectResponse;
 import edu.vn.hcmuaf.ebook.entity.InvalidatedToken;
 import edu.vn.hcmuaf.ebook.entity.User;
+import edu.vn.hcmuaf.ebook.enums.RoleEnum;
 import edu.vn.hcmuaf.ebook.exception.AppException;
 import edu.vn.hcmuaf.ebook.exception.ErrorCode;
 import edu.vn.hcmuaf.ebook.repository.InvalidatedTokenRepository;
+import edu.vn.hcmuaf.ebook.repository.RoleRepository;
 import edu.vn.hcmuaf.ebook.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +40,7 @@ import java.util.UUID;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
+    private final RoleRepository roleRepository;
     UserRepository userRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
 
@@ -126,5 +130,24 @@ public class AuthenticationService {
             log.error("Error signing JWT", e);
             throw new RuntimeException(e);
         }
+    }
+
+    public AuthenticationResponse authenticateGoogle(GoogleAuthRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseGet(() -> {
+                    User newUser = User.builder()
+                            .email(request.getEmail())
+                            .avatar(request.getAvatar())
+                            .password(UUID.randomUUID().toString())
+                            .role(roleRepository.findByName(RoleEnum.USER.name())
+                                    .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED)))
+                            .build();
+                    return userRepository.save(newUser);
+                });
+        String token = generateToken(user);
+        return AuthenticationResponse.builder()
+                .token(token)
+                .authenticated(true)
+                .build();
     }
 }
