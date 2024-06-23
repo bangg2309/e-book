@@ -2,6 +2,7 @@ package edu.vn.hcmuaf.ebook.controller.auth;
 
 import com.nimbusds.jose.JOSEException;
 import edu.vn.hcmuaf.ebook.dto.request.AuthenticationRequest;
+import edu.vn.hcmuaf.ebook.dto.request.GoogleAuthRequest;
 import edu.vn.hcmuaf.ebook.dto.request.IntrospectRequest;
 import edu.vn.hcmuaf.ebook.dto.request.LogoutRequest;
 import edu.vn.hcmuaf.ebook.dto.response.ApiResponse;
@@ -45,6 +46,13 @@ public class AuthenticationController {
     ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
         authenticationService.logout(request);
         return ApiResponse.<Void>builder()
+                .build();
+    }
+    @PostMapping("/google")
+    ApiResponse<AuthenticationResponse> authenticateGoogle(@RequestBody GoogleAuthRequest request) {
+        var result = authenticationService.authenticateGoogle(request);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(result)
                 .build();
     }
 
